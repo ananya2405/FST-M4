@@ -1,0 +1,50 @@
+# Create and use database
+CREATE DATABASE office;
+
+# Show databases
+hive> show databases;
+
+# Use database
+use office;
+
+# Show tables
+show tables;
+
+# Create employee table
+CREATE TABLE employee
+(id INT, name STRING, dept STRING, yoj INT, salary INT)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+TBLPROPERTIES ("skip.header.line.count"="1");
+
+# Load data into employee table
+LOAD DATA LOCAL INPATH '/root/empData.csv' INTO TABLE employee;
+
+# Run queries in employee table
+select * from employee;
+select count(*) from employee;
+
+
+# Map-reduce through hive:
+select count(*) from employee where dept='IT';
+
+# Export to HDFS directory
+INSERT OVERWRITE DIRECTORY '/user/ananya/HiveOutput'
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+SELECT * FROM employee WHERE dept='IT';
+
+# Fetch data in HDFS & view
+dfs -ls /user/ananya/HiveOutput;
+dfs -cat /user/ananya/HiveOutput/000000_0;
+
+
+# Export to local directory
+INSERT OVERWRITE LOCAL DIRECTORY '/root/HiveOutput'
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+SELECT * FROM employee WHERE dept='IT';
+
+# Fetch data in local & view
+ls /root
+ls /root/HiveOutput/
+cat root/HiveOutput/000000_0 > root/HiveOutput/result.csv
+
+
