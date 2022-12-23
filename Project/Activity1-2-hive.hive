@@ -1,0 +1,29 @@
+-- Drop existing tables so those an be reusable
+DROP TABLE episodes;
+DROP TABLE episodeIV;
+
+-- Create a table to store results
+CREATE TABLE episodes (name STRING, line STRING)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t'
+TBLPROPERTIES ("skip.header.line.count"="2");
+
+
+-- Load data into the database using a file on your local system (NOT HDFS)
+LOAD DATA LOCAL INPATH '/root/inputs/episodeIV_dialouges.txt' INTO TABLE episodes;
+LOAD DATA LOCAL INPATH '/root/inputs/episodeV_dialouges.txt' INTO TABLE episodes;
+LOAD DATA LOCAL INPATH '/root/inputs/episodeVI_dialouges.txt' INTO TABLE episodes;
+
+-- Activity1
+INSERT OVERWRITE DIRECTORY '/user/ananya/HiveProjectOutput'
+SELECT name, count(name) as no_of_lines FROM episodes GROUP BY name ORDER BY no_of_lines DESC ;
+
+-- Activity2
+CREATE TABLE episodeIV (name STRING, line STRING)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t'
+TBLPROPERTIES ("skip.header.line.count"="2");
+
+-- Load data into table
+LOAD DATA LOCAL INPATH '/root/inputs/episodeIV_dialouges.txt' INTO TABLE episodeIV;
+
+-- Query to count lines
+SELECT count(*)  FROM episodeIV WHERE INSTR(line, 'Luke') >=1 ;
